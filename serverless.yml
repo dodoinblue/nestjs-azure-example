@@ -1,0 +1,63 @@
+service: nestjs-azure-example
+frameworkVersion: "3"
+
+plugins:
+  - serverless-azure-functions
+  - serverless-webpack
+  # - serverless-dotenv-plugin
+
+provider:
+  name: azure
+  stage: dev
+  runtime: nodejs12
+  region: West US 2
+  subscriptionId: apikey
+  resourceGroup: sls-demo-2
+
+custom:
+  webpack:
+    webpackConfig: ./webpack.sls.js
+
+# you can define apim configuration here
+# apim:
+#   apis:
+#     - name: v1
+#       subscriptionRequired: false # if true must provide an api key
+#       displayName: v1
+#       description: V1 sample app APIs
+#       protocols:
+#         - https
+#       path: v1
+#       tags:
+#         - tag1
+#         - tag2
+#       authorization: none
+#   cors:
+#     allowCredentials: false
+#     allowedOrigins:
+#       - "*"
+#     allowedMethods:
+#       - GET
+#       - POST
+#       - PUT
+#       - DELETE
+#       - PATCH
+#     allowedHeaders:
+#       - "*"
+#     exposeHeaders:
+#       - "*"
+
+functions:
+  nestapp:
+    handler: src/handlers/azure.handler
+    events:
+      - http: true
+        x-azure-settings:
+          # name: req
+          # methods:
+          #   - post
+          #   - get
+          #   - option
+          #   - delete
+          route: "{proxy+}"
+          authLevel: anonymous
